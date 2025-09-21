@@ -1,0 +1,1913 @@
+openapi: 3.0.1
+info:
+  title: DG Bank API
+  description: "API REST per il sistema bancario DG Bank. Consente gestione utenti,\
+    \ conti, carte e transazioni."
+  contact:
+    name: Daniele Groff
+    url: https://github.com/Daniele-Groff/DGBank-Backend.git
+    email: groff.daniele@gmail.com
+  version: "1.0"
+servers:
+- url: http://localhost:8080/api
+  description: Generated server url
+security:
+- Bearer Authentication: []
+tags:
+- name: Cards
+  description: Endpoint per la gestione delle carte
+- name: Test
+  description: Endpoint di test
+- name: Authentication
+  description: Endpoint per autenticazione e gestione utenti
+- name: Accounts
+  description: Endpoint per la gestione degi conti
+- name: Transactions
+  description: Endpoint per la gestione delle transazioni
+paths:
+  /transactions/{transactionId}/cancel:
+    put:
+      tags:
+      - Transactions
+      summary: Cancella transazione
+      description: Cancella una transazione in stato PENDING
+      operationId: cancelTransaction
+      parameters:
+      - name: transactionId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "404":
+          description: Transazione non trovata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "200":
+          description: Transazione cancellata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "400":
+          description: Impossibile cancellare la transazione o ID non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /cards/{cardId}/block:
+    put:
+      tags:
+      - Cards
+      summary: Blocca carta
+      description: Disattiva temporaneamente una carta
+      operationId: blockCard
+      parameters:
+      - name: cardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Carta non trovata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "200":
+          description: Carta bloccata con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "400":
+          description: ID carta non valido o carta già bloccata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "403":
+          description: Operazione non autorizzata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /cards/{cardId}/activate:
+    put:
+      tags:
+      - Cards
+      summary: Attiva carta
+      description: Riattiva una carta precedentemente bloccata
+      operationId: activateCard
+      parameters:
+      - name: cardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "400":
+          description: ID carta non valido o carta già attiva
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "404":
+          description: Carta non trovata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "403":
+          description: Operazione non autorizzata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "200":
+          description: Carta attivata con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /accounts/{accountId}/unfreeze:
+    put:
+      tags:
+      - Accounts
+      summary: Scongela account
+      description: Scongela un conto
+      operationId: unfreezeAccount
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "400":
+          description: ID account non valido o conto già attivo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "403":
+          description: Operazione non autorizzata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "200":
+          description: Conto scongelato con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /accounts/{accountId}/freeze:
+    put:
+      tags:
+      - Accounts
+      summary: Congela account
+      description: Congela un conto
+      operationId: freezeAccount
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "400":
+          description: ID account non valido o conto già congelato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "200":
+          description: Conto congelato con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "403":
+          description: Operazione non autorizzata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /transactions/withdraw:
+    post:
+      tags:
+      - Transactions
+      summary: Effettua prelievo
+      description: Preleva denaro da un conto (es. da ATM)
+      operationId: withdraw
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+        required: true
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "403":
+          description: Operazione non consentita
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "201":
+          description: Prelievo completato con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "400":
+          description: Saldo insufficiente o dati non validi
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+  /transactions/transfer:
+    post:
+      tags:
+      - Transactions
+      summary: Effettua trasferimento
+      description: Trasferisce denaro tra due conti interni
+      operationId: transfer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+        required: true
+      responses:
+        "403":
+          description: Operazione non consentita
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "201":
+          description: Trasferimento completato con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "404":
+          description: Uno dei conti non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "400":
+          description: Saldo insufficiente o dati non validi
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+  /transactions/deposit:
+    post:
+      tags:
+      - Transactions
+      summary: Effettua deposito
+      description: Effettua un deposito
+      operationId: deposit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+        required: true
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "403":
+          description: Operazione non consentita
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "201":
+          description: Deposito completato con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "400":
+          description: Dati non validi o importo non positivo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+  /cards/issue:
+    post:
+      tags:
+      - Cards
+      summary: Rilascia carta
+      description: Rilascia una carta associata ad un conto
+      operationId: issueCard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCardRequest'
+        required: true
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        "201":
+          description: Carta creata con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        "400":
+          description: Dati non validi
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        "403":
+          description: Operazione non autorizzata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+  /auth/validate-token:
+    post:
+      tags:
+      - Authentication
+      summary: Convalida token
+      description: Convalida il token
+      operationId: validateToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateTokenRequest'
+        required: true
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TokenValidationResponse'
+        "400":
+          description: Token mancante
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TokenValidationResponse'
+        "200":
+          description: Validazione completata (controlla il campo 'valid' nella response)
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TokenValidationResponse'
+  /auth/register:
+    post:
+      tags:
+      - Authentication
+      summary: Registra nuovo utente
+      description: Crea un nuovo account utente nel sistema
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      responses:
+        "400":
+          description: Dati non validi o utente già esistente
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        "201":
+          description: Utente registrato con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /auth/refresh-token:
+    post:
+      tags:
+      - Authentication
+      summary: Aggiorna token
+      description: Ottiene un nuovo token usando il refresh token
+      operationId: refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+        required: true
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+        "401":
+          description: Refresh token non valido o scaduto
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+        "400":
+          description: Refresh token mancante
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+        "200":
+          description: Token refreshato con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+  /auth/login:
+    post:
+      tags:
+      - Authentication
+      summary: Effettua login
+      description: Effettua il login di un utente esistente
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        "400":
+          description: Dati mancanti o non validi
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        "200":
+          description: Login effettuato con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        "401":
+          description: Credenziali non valide
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /accounts/create:
+    post:
+      tags:
+      - Accounts
+      summary: Crea account
+      description: Crea un nuovo account per un utente
+      operationId: createAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequest'
+        required: true
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        "201":
+          description: Conto creato con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        "400":
+          description: ID utente non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        "403":
+          description: Utente non autorizzato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        "404":
+          description: Utente non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+  /transactions/{transactionId}:
+    get:
+      tags:
+      - Transactions
+      summary: Ottieni dettagli transazione
+      description: Recupera i dettagli di una transazione specifica
+      operationId: getTransaction
+      parameters:
+      - name: transactionId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Transazione non trovata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "200":
+          description: Dettagli transazione recuperati
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "400":
+          description: ID transazione non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+  /transactions/user/{userId}/recent:
+    get:
+      tags:
+      - Transactions
+      summary: Ottieni transazioni recenti utente
+      description: Recupera le ultime N transazioni di un utente
+      operationId: getRecentUserTransactions
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "404":
+          description: Utente non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "200":
+          description: Transazioni utente recuperate con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "400":
+          description: Parametro limit non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+  /transactions/user/{userId}/paginated:
+    get:
+      tags:
+      - Transactions
+      summary: Ottieni transazioni utente paginate
+      description: Recupera le transazioni di un utente con paginazione
+      operationId: getUserTransactionsPaginated
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginatedTransactionResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginatedTransactionResponse'
+        "400":
+          description: Parametri di paginazione non validi
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginatedTransactionResponse'
+        "404":
+          description: Utente non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginatedTransactionResponse'
+        "200":
+          description: Transazioni utente recuperate con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginatedTransactionResponse'
+  /transactions/user/{userId}/incomes-since:
+    get:
+      tags:
+      - Transactions
+      summary: Ottieni entrate recenti
+      description: Calcola le entrate totali di un utente da una data specifica
+      operationId: getUserRecentIncomes
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: sinceDate
+        in: query
+        description: Data di inizio calcolo (formato ISO)
+        required: false
+        schema:
+          type: string
+          format: date-time
+        example: 2024-01-15T00:00:00
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AmountResponse'
+        "200":
+          description: Calcolo entrate completato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AmountResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AmountResponse'
+        "400":
+          description: Parametri non validi
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AmountResponse'
+        "404":
+          description: Utente non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AmountResponse'
+  /transactions/user/{userId}/expenses-since:
+    get:
+      tags:
+      - Transactions
+      summary: Trova uscite recenti di utente
+      description: "Trova le uscite di un utente da una certa data, con paginazione"
+      operationId: getUserRecentExpenses
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: sinceDate
+        in: query
+        description: Data di inizio calcolo (formato ISO)
+        required: false
+        schema:
+          type: string
+          format: date-time
+        example: 2024-01-15T00:00:00
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AmountResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AmountResponse'
+        "200":
+          description: Calcolo uscite completato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AmountResponse'
+        "400":
+          description: Parametri non validi (data malformata)
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AmountResponse'
+        "404":
+          description: Utente non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AmountResponse'
+  /transactions/account/{accountId}:
+    get:
+      tags:
+      - Transactions
+      summary: Ottieni transazioni account
+      description: Recupera tutte le transazioni di un conto
+      operationId: getAccountTransactions
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "400":
+          description: ID account non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "200":
+          description: Transazioni recuperate con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+  /transactions/account/{accountId}/recent:
+    get:
+      tags:
+      - Transactions
+      summary: Ottieni transazioni recenti account
+      description: Recupera le ultime N transazioni di un conto
+      operationId: getRecentAccountTransactions
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: limit
+        in: query
+        description: Numero massimo di transazioni
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "200":
+          description: Transazioni recenti recuperate con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        "400":
+          description: Parametro limit non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+  /transactions/account/{accountId}/paginated:
+    get:
+      tags:
+      - Transactions
+      summary: Ottieni transazioni paginate
+      description: Recupera le transazioni di un conto con paginazione
+      operationId: getAccountTransactionsPaginated
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: page
+        in: query
+        description: Numero pagina
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+        example: 0
+      - name: size
+        in: query
+        description: Elementi per pagina
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginatedTransactionResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginatedTransactionResponse'
+        "400":
+          description: Parametri di paginazione non validi
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginatedTransactionResponse'
+        "200":
+          description: Transazioni paginate recuperate con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginatedTransactionResponse'
+  /test/hello:
+    get:
+      tags:
+      - Test
+      summary: Test API
+      description: API di test
+      operationId: hello
+      responses:
+        "200":
+          description: DG Bank API is running!
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /cards/{cardId}:
+    get:
+      tags:
+      - Cards
+      summary: Trova carta
+      description: Trova i dati di una carta tramite ID
+      operationId: getCard
+      parameters:
+      - name: cardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Carta non trovata
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        "200":
+          description: Dati carta recuperati
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        "400":
+          description: ID carta non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+  /cards/user/{userId}:
+    get:
+      tags:
+      - Cards
+      summary: Ottieni carte utente
+      description: Recupera tutte le carte di un utente
+      operationId: getUserCards
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+        "400":
+          description: ID utente non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+        "200":
+          description: Carte utente recuperate
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+        "404":
+          description: Utente non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+  /cards/account/{accountId}:
+    get:
+      tags:
+      - Cards
+      summary: Ottieni carte account
+      description: Recupera tutte le carte collegate a un account
+      operationId: getAccountCards
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+        "200":
+          description: Carte account recuperate
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+        "400":
+          description: ID account non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+  /accounts/{accountId}:
+    get:
+      tags:
+      - Accounts
+      summary: Trova dati account
+      description: Trova i dati di un account
+      operationId: getAccount
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        "400":
+          description: ID account non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        "200":
+          description: Dati account recuperati
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+  /accounts/{accountId}/balance:
+    get:
+      tags:
+      - Accounts
+      summary: Verifica saldo
+      description: Verifica il saldo di un account
+      operationId: getBalance
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Account non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+        "400":
+          description: ID account non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+        "200":
+          description: Saldo recuperato con successo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+  /accounts/user/{userId}:
+    get:
+      tags:
+      - Accounts
+      summary: Trova account utente
+      description: Trova tutti gli account di un utente
+      operationId: getUserAccounts
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "500":
+          description: Errore interno del server
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserAccountsResponse'
+        "403":
+          description: Accesso negato - non puoi accedere ai dati di altri utenti
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserAccountsResponse'
+        "400":
+          description: ID utente non valido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserAccountsResponse'
+        "404":
+          description: Utente non trovato
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserAccountsResponse'
+        "200":
+          description: Conti utente recuperati
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserAccountsResponse'
+components:
+  schemas:
+    BaseResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+      description: Response base per tutte le operazioni
+    TransactionRequest:
+      required:
+      - accountId
+      - amount
+      - description
+      type: object
+      properties:
+        accountId:
+          type: integer
+          description: ID dell'account emittente o destinatario
+          format: int64
+          example: 1
+        amount:
+          type: number
+          description: Importo
+          example: 42.0
+        description:
+          type: string
+          description: Descrizione o causale
+          example: Rata affitto
+      description: Dati per la richiesta di una transazione a enti esterni
+    TransactionData:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID della transazione
+          format: int64
+          example: 1
+        transactionId:
+          type: string
+          description: ID univoco della transazione
+          example: 550e8400-e29b-41d4-a716-446655440000
+        amount:
+          type: number
+          description: Importo
+          example: 500.0
+        description:
+          type: string
+          description: Descrizione
+          example: Deposito contanti
+        type:
+          type: string
+          description: Tipo di transazione
+          enum:
+          - TRANSFER
+          - DEPOSIT
+          - WITHDRAWAL
+          - PAYMENT
+        status:
+          type: string
+          description: Possibili stati delle transazioni
+          enum:
+          - PENDING
+          - COMPLETED
+          - FAILED
+          - CANCELLED
+        timestamp:
+          type: string
+          description: Data e ora della transazione
+          format: date-time
+        sender:
+          type: string
+          description: Mittente
+        recipient:
+          type: string
+          description: Destinatario
+      description: Dati della transazione
+    TransactionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        transaction:
+          $ref: '#/components/schemas/TransactionData'
+      description: Response per operazioni sulle transazioni
+    TransferRequest:
+      required:
+      - amount
+      - description
+      - fromAccountId
+      - toAccountIban
+      type: object
+      properties:
+        fromAccountId:
+          type: integer
+          description: ID dell'account emittente
+          format: int64
+          example: 1
+        toAccountIban:
+          type: string
+          description: IBAN dell'account destinatario
+          example: IT 36 X 05472 81110 000664209461
+        amount:
+          type: number
+          description: Importo
+          example: 42.0
+        description:
+          type: string
+          description: Descrizione o causale
+          example: Rata affitto
+      description: Dati per richiedere un trasferimento tra conti
+    NewCardRequest:
+      required:
+      - accountId
+      type: object
+      properties:
+        accountId:
+          type: integer
+          description: ID dell'account a cui associare la carta
+          format: int64
+          example: 1
+      description: Dati per il rilascio di una nuova carta
+    CardData:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID della carta
+          format: int64
+          example: 1
+        cardNumber:
+          type: string
+          description: Numero carta mascherato
+          example: '**** **** **** 1234'
+        expiryDate:
+          type: string
+          description: Data scadenza
+          format: date
+          example: 2028-01-15
+        isActive:
+          type: boolean
+          description: Carta attiva
+          example: true
+        owner:
+          type: string
+          description: Proprietario della carta
+          example: Mario Rossi
+        accountNumber:
+          type: string
+          description: Numero account collegato
+          example: IT 12 X 05472 81110 123456789012
+      description: Dati della carta
+    CardResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        card:
+          $ref: '#/components/schemas/CardData'
+      description: Response per operazioni sulle carte
+    ValidateTokenRequest:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token
+      description: Dati per verificare la validità del token
+    TokenValidationResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          description: Token valido
+          example: true
+        email:
+          type: string
+          description: Email associata al token
+          example: mario.rossi@email.com
+      description: Response per validazione token
+    RegisterRequest:
+      required:
+      - city
+      - country
+      - dateOfBirth
+      - documentExpiry
+      - documentIssuer
+      - documentNumber
+      - documentType
+      - email
+      - firstName
+      - lastName
+      - password
+      - phoneNumber
+      - postalCode
+      - province
+      - street
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email dell'utente
+          example: mario.rossi@email.com
+        password:
+          minLength: 8
+          type: string
+          description: Password dell'utente
+          example: password123
+        firstName:
+          type: string
+          description: Nome
+          example: Mario
+        lastName:
+          type: string
+          description: Cognome
+          example: Rossi
+        dateOfBirth:
+          type: string
+          description: Data di nascita (deve essere maggiorenne)
+          format: date
+          example: 1990-01-15
+        phoneNumber:
+          type: string
+          description: Numero di telefono
+          example: +39 123 456 7890
+        documentType:
+          type: string
+          description: Tipi di documento accettati
+          example: CARTA_IDENTITA
+          enum:
+          - CARTA_IDENTITA
+          - PASSAPORTO
+          - PATENTE
+          - PERMESSO_SOGGIORNO
+        documentNumber:
+          type: string
+          description: Numero del documento
+          example: AB1234567
+        documentExpiry:
+          type: string
+          description: Data di scadenza del documento
+          format: date
+          example: 2030-01-15
+        documentIssuer:
+          type: string
+          description: Ente che ha rilasciato il documento
+          example: Comune di Milano
+        street:
+          type: string
+          description: Indirizzo (via e numero civico)
+          example: Via Roma 123
+        city:
+          type: string
+          description: Città
+          example: Milano
+        postalCode:
+          type: string
+          description: Codice postale
+          example: "20100"
+        province:
+          type: string
+          description: Provincia
+          example: MI
+        country:
+          type: string
+          description: Paese
+          example: Italia
+      description: Dati per la registrazione di un nuovo utente
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        token:
+          type: string
+          description: Token JWT per l'autenticazione
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: Token per refresh
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        user:
+          $ref: '#/components/schemas/UserData'
+      description: Response per operazioni di autenticazione
+    UserData:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID utente
+          format: int64
+          example: 1
+        email:
+          type: string
+          description: Email
+          example: mario.rossi@email.com
+        firstName:
+          type: string
+          description: Nome
+          example: Mario
+        lastName:
+          type: string
+          description: Cognome
+          example: Rossi
+        fullName:
+          type: string
+          description: Nome completo
+          example: Mario Rossi
+        dateOfBirth:
+          type: string
+          description: Data di nascita
+          format: date
+          example: 1990-01-15
+        fullAddress:
+          type: string
+          description: Indirizzo completo
+          example: "Via Roma 123, 20100 Milano (MI), Italia"
+        registeredDocument:
+          type: string
+          description: Tipo documento registrato
+          example: Carta d'Identità
+      description: Dati utente per le response
+    RefreshTokenRequest:
+      required:
+      - refreshToken
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh token
+      description: Dati per richiedere il token
+    RefreshTokenResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        token:
+          type: string
+          description: Nuovo token JWT
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: Token per refresh (stesso di prima)
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      description: Response per refresh del token
+    LoginRequest:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email dell'utente
+          example: mario.rossi@email.com
+        password:
+          type: string
+          description: Password dell'utente
+          example: password123
+      description: Credenziali di login
+    CreateAccountRequest:
+      required:
+      - userId
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: ID dell'utente intestatario
+          format: int64
+          example: 1
+      description: Dati per la creazione di un nuovo account
+    AccountData:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID del conto
+          format: int64
+          example: 1
+        accountNumber:
+          type: string
+          description: Numero IBAN del conto
+          example: IT 12 X 05472 81110 123456789012
+        balance:
+          type: number
+          description: Saldo disponibile
+          example: 1500.5
+        isActive:
+          type: boolean
+          description: Indica se il conto è attivo
+          example: true
+        dateOpened:
+          type: string
+          description: Data di apertura del conto
+          format: date-time
+        owner:
+          $ref: '#/components/schemas/OwnerInfo'
+      description: Dati del conto bancario
+    AccountResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        account:
+          $ref: '#/components/schemas/AccountData'
+      description: Response per operazioni sui conti
+    OwnerInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID del proprietario
+          format: int64
+          example: 1
+        fullName:
+          type: string
+          description: Nome completo
+          example: Mario Rossi
+        email:
+          type: string
+          description: Email
+          example: mario.rossi@email.com
+      description: Informazioni base del proprietario
+    TransactionListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        accountId:
+          type: integer
+          description: ID account/utente
+          format: int64
+          example: 1
+        transactions:
+          type: array
+          description: Lista delle transazioni
+          items:
+            $ref: '#/components/schemas/TransactionData'
+        count:
+          type: integer
+          description: Numero di transazioni
+          format: int32
+          example: 15
+      description: Response per lista transazioni
+    PaginatedTransactionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        accountId:
+          type: integer
+          description: ID account/utente
+          format: int64
+          example: 1
+        transactions:
+          type: array
+          description: Lista delle transazioni
+          items:
+            $ref: '#/components/schemas/TransactionData'
+        currentPage:
+          type: integer
+          description: Pagina corrente
+          format: int32
+          example: 0
+        totalPages:
+          type: integer
+          description: Numero totale di pagine
+          format: int32
+          example: 5
+        totalElements:
+          type: integer
+          description: Numero totale di elementi
+          format: int64
+          example: 47
+        hasNext:
+          type: boolean
+          description: Ha pagina successiva
+          example: true
+        hasPrevious:
+          type: boolean
+          description: Ha pagina precedente
+          example: false
+      description: Response per transazioni con paginazione
+    AmountResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        userId:
+          type: integer
+          description: ID utente
+          format: int64
+          example: 1
+        sinceDate:
+          type: string
+          description: Data di inizio calcolo
+          format: date-time
+        totalAmount:
+          type: number
+          description: Importo totale
+          example: 1500.0
+      description: Response per somme di importi
+    CardListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        cards:
+          type: array
+          description: Lista delle carte
+          items:
+            $ref: '#/components/schemas/CardData'
+      description: Response per lista carte
+    BalanceResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        accountId:
+          type: integer
+          description: ID del conto
+          format: int64
+          example: 1
+        balance:
+          type: number
+          description: Saldo attuale
+          example: 1500.5
+      description: Response per richiesta saldo
+    UserAccountsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica se l'operazione è andata a buon fine
+          example: true
+        message:
+          type: string
+          description: Messaggio descrittivo del risultato
+          example: Operazione completata con successo
+        accounts:
+          type: array
+          description: Lista dei conti dell'utente
+          items:
+            $ref: '#/components/schemas/AccountData'
+        totalBalance:
+          type: number
+          description: Saldo totale di tutti i conti
+          example: 3500.75
+      description: Response per lista conti di un utente
+  securitySchemes:
+    Bearer Authentication:
+      type: http
+      description: Inserire il token JWT ottenuto dal login
+      scheme: bearer
+      bearerFormat: JWT
