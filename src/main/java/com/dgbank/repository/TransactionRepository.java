@@ -24,11 +24,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT t FROM Transaction t WHERE t.fromAccount.id = :accountId OR t.toAccount.id = :accountId ORDER BY t.timestamp DESC")
     List<Transaction> findByAccountId(@Param("accountId") Long accountId);
 
-    // Trova transazioni account con paginazione
+    // Trova transazioni account con impaginazione
     @Query("SELECT t FROM Transaction t WHERE t.fromAccount.id = :accountId OR t.toAccount.id = :accountId ORDER BY t.timestamp DESC")
     Page<Transaction> findByAccountIdPaginated(@Param("accountId") Long accountId, Pageable pageable);
 
-    // Trova transazioni utente con paginazione
+    // Trova transazioni utente con impaginazione
     @Query("SELECT t FROM Transaction t WHERE t.fromAccount.owner.id = :userId OR t.toAccount.owner.id = :userId ORDER BY t.timestamp DESC")
     Page<Transaction> findByUserIdPaginated(@Param("userId") Long userId, Pageable pageable);
 
@@ -56,3 +56,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByToAccountIdOrderByTimestampDesc(Long accountId);
 
 }
+
